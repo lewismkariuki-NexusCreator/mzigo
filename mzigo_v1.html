@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mzigo — Know Your Border Rights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:    #0B0F1A;
+  --ink2:   #131929;
+  --ink3:   #1B2237;
+  --ink4:   #222C42;
+  --gold:   #D4A017;
+  --gold-l: rgba(212,160,23,0.15);
+  --gold-g: rgba(212,160,23,0.35);
+  --teal:   #0EA5A0;
+  --teal-l: rgba(14,165,160,0.12);
+  --red:    #DC2626;
+  --red-l:  rgba(220,38,38,0.12);
+  --green:  #16A34A;
+  --green-l:rgba(22,163,74,0.12);
+  --w:      #FFFFFF;
+  --w80:    rgba(255,255,255,0.8);
+  --w60:    rgba(255,255,255,0.6);
+  --w40:    rgba(255,255,255,0.4);
+  --w20:    rgba(255,255,255,0.2);
+  --w10:    rgba(255,255,255,0.1);
+  --w05:    rgba(255,255,255,0.05);
+  --bd:     rgba(255,255,255,0.1);
+  --font-d: 'Space Grotesk', sans-serif;
+  --font-b: 'Inter', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--ink);color:var(--w);font-family:var(--font-b);overflow-x:hidden}
+#app{max-width:480px;margin:0 auto;min-height:100vh;position:relative;background:var(--ink)}
+.screen{display:none;flex-direction:column;min-height:100vh}
+.screen.active{display:flex}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 20px 12px;background:var(--ink);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:50}
+.brand{font-family:var(--font-d);font-weight:800;font-size:20px;letter-spacing:-0.5px}
+.brand-m{color:var(--gold)}
+.brand-zigo{color:var(--w)}
+.topbar-back{background:none;border:none;color:var(--w60);font-size:13px;cursor:pointer;font-family:var(--font-b);padding:6px 0;display:flex;align-items:center;gap:5px}
+.topbar-back:hover{color:var(--w)}
+.topbar-lang{background:none;border:1px solid var(--bd);color:var(--w60);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:var(--font-b)}
+
+/* SCROLL BODY */
+.scroll{flex:1;padding:20px 20px 80px;overflow-y:auto}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--ink2);border-top:1px solid var(--bd);display:flex;z-index:50}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 14px;cursor:pointer;border:none;background:none;color:var(--w40);font-size:10px;font-family:var(--font-b);font-weight:500;letter-spacing:0.3px;text-transform:uppercase;transition:color .15s}
+.bnav-btn .bi{font-size:20px;line-height:1}
+.bnav-btn.on{color:var(--gold)}
+
+/* CARDS */
+.card{background:var(--ink3);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.card-title{font-family:var(--font-d);font-size:15px;font-weight:700;margin-bottom:6px}
+.card-body{font-size:13px;color:var(--w60);line-height:1.65}
+
+/* HERO */
+.hero{padding:28px 20px 20px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.hero-h{font-family:var(--font-d);font-size:28px;font-weight:800;line-height:1.15;letter-spacing:-.5px;margin-bottom:12px}
+.hero-h em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:14px;color:var(--w60);line-height:1.65;margin-bottom:24px}
+
+/* STATS */
+.stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;padding:0 20px}
+.stat-tile{background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:14px 12px;text-align:center}
+.stat-val{font-family:var(--font-d);font-size:22px;font-weight:800;color:var(--gold);line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:10px;color:var(--w40);line-height:1.4}
+
+/* CTA BUTTONS */
+.cta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 20px}
+.cta-p{background:var(--gold);color:var(--ink);border:none;border-radius:10px;padding:16px 12px;font-family:var(--font-d);font-weight:700;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:4px;transition:background .15s}
+.cta-p:hover{background:#c4900f}
+.cta-p .ci{font-size:22px}
+.cta-p .cs{font-size:11px;font-weight:500;opacity:.8;font-family:var(--font-b)}
+.cta-s{background:var(--ink3);color:var(--w);border:1px solid var(--bd);border-radius:10px;padding:16px 12px;font-family:var(--font-d);font-weight:700;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:4px;transition:border-color .15s}
+.cta-s:hover{border-color:var(--gold)}
+.cta-s .ci{font-size:22px}
+.cta-s .cs{font-size:11px;font-weight:500;opacity:.6;font-family:var(--font-b)}
+
+/* STEP INDICATOR */
+.steps-ind{display:flex;gap:6px;padding:14px 20px 0}
+.step-d{height:4px;flex:1;border-radius:2px;background:var(--w10);transition:background .2s}
+.step-d.done{background:var(--gold)}
+.step-d.cur{background:var(--gold);opacity:.5}
+
+/* STEP PANELS */
+.step-panel{display:none}.step-panel.on{display:block}
+.step-ey{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.step-h{font-family:var(--font-d);font-size:22px;font-weight:700;line-height:1.25;margin-bottom:6px}
+.step-sub{font-size:13px;color:var(--w60);line-height:1.6;margin-bottom:22px}
+
+/* COMMODITY SEARCH */
+.search-wrap{position:relative;margin-bottom:16px}
+.search-input{width:100%;background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:13px 44px 13px 14px;color:var(--w);font-family:var(--font-b);font-size:14px;outline:none}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--w40)}
+.search-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.commodity-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.comm-tile{background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s}
+.comm-tile:hover{border-color:var(--gold-g)}
+.comm-tile.sel{border-color:var(--gold);background:var(--gold-l)}
+.comm-icon{font-size:22px;margin-bottom:6px}
+.comm-name{font-size:13px;font-weight:600;color:var(--w80);margin-bottom:2px}
+.comm-cat{font-size:11px;color:var(--w40)}
+.comm-hs{font-size:10px;color:var(--gold);margin-top:3px;font-weight:600}
+
+/* CROSSING TILES */
+.cross-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.cross-tile{background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s}
+.cross-tile:hover{border-color:var(--gold-g)}
+.cross-tile.sel{border-color:var(--gold);background:var(--gold-l)}
+.cross-name{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--w);margin-bottom:2px}
+.cross-route{font-size:11px;color:var(--w60);margin-bottom:6px}
+.cross-volume{font-size:10px;color:var(--gold);font-weight:600}
+
+/* WEIGHT INPUT */
+.weight-row{display:flex;gap:8px;margin-bottom:20px}
+.weight-input{flex:1;background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:13px 14px;color:var(--w);font-family:var(--font-b);font-size:18px;font-weight:700;outline:none;text-align:center}
+.weight-input:focus{border-color:var(--gold)}
+.unit-toggle{display:flex;gap:6px}
+.unit-btn{background:var(--ink3);border:1px solid var(--bd);border-radius:8px;padding:10px 16px;cursor:pointer;color:var(--w60);font-family:var(--font-b);font-size:13px;font-weight:600;transition:all .15s}
+.unit-btn.on{background:var(--gold-l);border-color:var(--gold);color:var(--gold)}
+
+/* FORM FIELDS */
+.f-label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--w40);margin:16px 0 8px}
+.f-input{width:100%;background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:13px 14px;color:var(--w);font-family:var(--font-b);font-size:14px;outline:none;transition:border-color .15s}
+.f-input:focus{border-color:var(--gold)}
+.f-input::placeholder{color:var(--w40)}
+select.f-input option{background:#1B2237;color:#fff}
+
+/* RECEIPT */
+.receipt-wrap{border:1.5px solid var(--gold-g);border-radius:14px;overflow:hidden;margin-bottom:20px}
+.receipt-header{background:linear-gradient(135deg,#1a1400 0%,var(--ink3) 100%);padding:18px;border-bottom:1px solid var(--gold-g);display:flex;align-items:center;gap:14px}
+.receipt-logo{width:44px;height:44px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:18px;color:var(--ink);flex-shrink:0}
+.receipt-title{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--w);margin-bottom:2px}
+.receipt-sub{font-size:11px;color:var(--gold)}
+.receipt-body{background:var(--ink2);padding:16px}
+.r-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--w05);font-size:13px}
+.r-row:last-child{border-bottom:none}
+.r-key{color:var(--w40);flex-shrink:0;max-width:45%}
+.r-val{font-weight:600;text-align:right}
+.r-highlight{font-size:16px;font-weight:800;color:var(--gold)}
+.receipt-footer{background:var(--ink3);padding:14px;border-top:1px solid var(--gold-g)}
+.receipt-legal{font-size:11px;color:var(--w40);line-height:1.6}
+.receipt-ref{font-family:var(--font-d);font-size:13px;color:var(--gold);font-weight:700;margin-top:8px;letter-spacing:.5px}
+
+/* DEMAND SECTION */
+.demand-box{background:var(--red-l);border:1px solid rgba(220,38,38,.25);border-radius:10px;padding:14px;margin-bottom:14px}
+.demand-title{font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px}
+.demand-body{font-size:13px;color:var(--w80);line-height:1.65}
+
+/* EXTORTION REPORT */
+.ext-form{background:var(--ink3);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.ext-title{font-size:13px;font-weight:700;color:var(--w);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+
+/* INFO BOX */
+.info-box{background:var(--w05);border:1px solid var(--bd);border-radius:10px;padding:14px;font-size:12px;color:var(--w60);line-height:1.6;margin:12px 0}
+
+/* BUTTONS */
+.btn-p{width:100%;background:var(--gold);color:var(--ink);border:none;border-radius:12px;padding:16px;font-family:var(--font-d);font-weight:700;font-size:16px;cursor:pointer;transition:background .15s;margin-bottom:10px}
+.btn-p:hover{background:#c4900f}
+.btn-p:disabled{background:var(--w20);color:var(--w40);cursor:not-allowed}
+.btn-g{width:100%;background:none;border:none;color:var(--w40);font-size:13px;padding:10px;cursor:pointer;font-family:var(--font-b)}
+.btn-g:hover{color:var(--w60)}
+.btn-outline{width:100%;background:none;border:1px solid var(--bd);color:var(--w60);border-radius:12px;padding:14px;font-family:var(--font-d);font-weight:600;font-size:14px;cursor:pointer;transition:all .15s;margin-bottom:10px}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* CROSSING REPORT FEED */
+.cross-report{background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:10px}
+.cr-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.cr-crossing{font-size:13px;font-weight:700;color:var(--w)}
+.cr-ts{font-size:11px;color:var(--w40)}
+.cr-amount{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.cr-legal{font-size:12px;color:var(--teal)}
+.cr-charged{font-size:12px;color:var(--red)}
+.cr-desc{font-size:12px;color:var(--w60);line-height:1.5}
+.badge-ext{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--red-l);color:var(--red)}
+.badge-ok{background:var(--green-l);color:var(--green)}
+.badge-warn{background:var(--gold-l);color:var(--gold)}
+
+/* RIGHTS GUIDE */
+.right-item{background:var(--ink3);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:10px;border-top:1px solid var(--bd);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.right-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.right-body{font-size:13px;color:var(--w60);line-height:1.6}
+.right-cite{font-size:11px;color:var(--gold);margin-top:6px;font-weight:600}
+
+/* LANG PANEL */
+.lang-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end}
+.lang-sheet{background:var(--ink2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;margin:0 auto}
+.lang-title{font-family:var(--font-d);font-size:16px;font-weight:700;margin-bottom:16px;text-align:center}
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lang-btn{background:var(--ink3);border:1px solid var(--bd);border-radius:10px;padding:14px;cursor:pointer;color:var(--w);font-size:14px;font-weight:600;text-align:center;font-family:var(--font-b)}
+.lang-btn:hover{border-color:var(--gold);color:var(--gold)}
+.lang-btn.active{border-color:var(--gold);background:var(--gold-l);color:var(--gold)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeIn .22s ease}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ════════════ LANDING ════════════ -->
+<div id="scr-home" class="screen active">
+  <div class="topbar">
+    <div class="brand"><span class="brand-m">M</span><span class="brand-zigo">zigo</span></div>
+    <button class="topbar-lang" onclick="showLang()">🌐 Language</button>
+  </div>
+  <div class="hero">
+    <div class="eyebrow" id="l-eyebrow">EAC cross-border rights</div>
+    <div class="hero-h" id="l-headline">If they're charging you more than the law allows — <em>Mzigo proves it</em></div>
+    <div class="hero-sub" id="l-sub">Select your commodity, crossing point, and quantity. Mzigo generates an instant fee dispute receipt showing the legal rate — something you can show a border official right now, in the moment.</div>
+  </div>
+  <div class="stat-strip">
+    <div class="stat-tile"><div class="stat-val">47</div><div class="stat-lbl">Commodities covered</div></div>
+    <div class="stat-tile"><div class="stat-val">8</div><div class="stat-lbl">Border crossings</div></div>
+    <div class="stat-tile"><div class="stat-val">214</div><div class="stat-lbl">Dispute receipts issued</div></div>
+  </div>
+  <div class="cta-grid">
+    <button class="cta-p" onclick="goReceipt()">
+      <span class="ci">🧾</span>
+      Get a receipt
+      <span class="cs">Dispute a fee now</span>
+    </button>
+    <button class="cta-s" onclick="goRights()">
+      <span class="ci">⚖️</span>
+      Know your rights
+      <span class="cs">EAC law simplified</span>
+    </button>
+    <button class="cta-s" onclick="goReport()">
+      <span class="ci">📡</span>
+      Report extortion
+      <span class="cs">Anonymous · shared</span>
+    </button>
+    <button class="cta-s" onclick="goFeed()">
+      <span class="ci">🗺️</span>
+      Crossing intel
+      <span class="cs">Live fee reports</span>
+    </button>
+  </div>
+  <div style="padding:0 20px;margin-bottom:10px">
+    <div class="eyebrow" style="margin-bottom:10px">Why Mzigo is different</div>
+    <div class="card">
+      <div class="card-body">KRA eCUSTOMS handles your declaration. Sauti handles market prices. <strong style="color:var(--w)">Mzigo handles what happens when an official demands KSh 800 for something that legally costs KSh 320</strong> — and you need to prove it, right now, at the barrier, in Swahili.</div>
+    </div>
+  </div>
+  <div style="padding:0 20px 20px">
+    <div class="eyebrow" style="margin-bottom:10px">Recent dispute receipts</div>
+    <div id="home-feed"></div>
+  </div>
+  <div style="height:80px"></div>
+</div>
+
+<!-- ════════════ RECEIPT FLOW ════════════ -->
+<div id="scr-receipt" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goHome()">← Back</button>
+    <div class="brand"><span class="brand-m">M</span><span class="brand-zigo">zigo</span></div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="steps-ind">
+    <div class="step-d cur" id="sd1"></div>
+    <div class="step-d" id="sd2"></div>
+    <div class="step-d" id="sd3"></div>
+    <div class="step-d" id="sd4"></div>
+  </div>
+  <div class="scroll">
+
+    <!-- STEP 1: COMMODITY -->
+    <div id="rs1" class="step-panel on anim">
+      <div class="step-ey">Step 1 of 4 — Commodity</div>
+      <div class="step-h">What are you crossing with?</div>
+      <div class="step-sub">Search by name or select from the most commonly traded goods at EAC borders.</div>
+      <div class="search-wrap">
+        <input class="search-input" id="comm-search" type="text" placeholder="Search commodity…" oninput="filterComm()">
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="commodity-grid" id="comm-grid"></div>
+      <button class="btn-p" id="r-s1-next" disabled onclick="rStep(2)">Continue →</button>
+      <button class="btn-g" onclick="goHome()">Cancel</button>
+    </div>
+
+    <!-- STEP 2: CROSSING + DIRECTION -->
+    <div id="rs2" class="step-panel anim" style="display:none">
+      <div class="step-ey">Step 2 of 4 — Crossing point</div>
+      <div class="step-h">Which border crossing?</div>
+      <div class="step-sub">The legal fee depends on the crossing and direction. Select the point you are at right now.</div>
+      <div class="cross-grid" id="cross-grid"></div>
+      <label class="f-label">Direction of travel</label>
+      <select class="f-input" id="cross-dir" style="margin-bottom:20px">
+        <option value="">Select direction…</option>
+        <option value="ke-ug">Kenya → Uganda</option>
+        <option value="ug-ke">Uganda → Kenya</option>
+        <option value="ke-tz">Kenya → Tanzania</option>
+        <option value="tz-ke">Tanzania → Kenya</option>
+        <option value="ke-et">Kenya → Ethiopia</option>
+        <option value="et-ke">Ethiopia → Kenya</option>
+      </select>
+      <button class="btn-p" id="r-s2-next" disabled onclick="rStep(3)">Continue →</button>
+      <button class="btn-g" onclick="rStep(1)">← Back</button>
+    </div>
+
+    <!-- STEP 3: QUANTITY + TRADER DETAILS -->
+    <div id="rs3" class="step-panel anim" style="display:none">
+      <div class="step-ey">Step 3 of 4 — Quantity</div>
+      <div class="step-h">How much are you carrying?</div>
+      <div class="step-sub">The EAC Simplified Trade Regime covers goods up to USD 2,000 in value. Below this threshold, specific rules apply.</div>
+      <label class="f-label">Quantity / weight</label>
+      <div class="weight-row">
+        <input class="weight-input" id="qty-input" type="number" min="0.1" step="0.1" placeholder="0" oninput="calcFee()">
+        <div class="unit-toggle">
+          <button class="unit-btn on" id="unit-kg" onclick="setUnit('kg')">kg</button>
+          <button class="unit-btn" id="unit-bags" onclick="setUnit('bags')">bags</button>
+          <button class="unit-btn" id="unit-pcs" onclick="setUnit('pcs')">pcs</button>
+        </div>
+      </div>
+      <div id="live-calc" style="display:none" class="card" style="margin-bottom:16px">
+        <div style="font-size:12px;color:var(--w40);margin-bottom:6px">Live calculation</div>
+        <div id="calc-legal" style="font-size:15px;font-weight:700;color:var(--teal)"></div>
+        <div id="calc-str" style="font-size:12px;color:var(--w60);margin-top:4px"></div>
+      </div>
+      <label class="f-label">Your name (optional — for receipt)</label>
+      <input class="f-input" id="trader-name" type="text" placeholder="e.g. Mama Njeri or leave blank">
+      <label class="f-label">Amount being demanded (if disputing right now)</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:16px;color:var(--w60)">KSh</span>
+        <input class="f-input" id="demanded-amt" type="number" min="0" placeholder="0" oninput="calcFee()" style="flex:1">
+      </div>
+      <div id="extortion-flag" style="display:none" class="demand-box">
+        <div class="demand-title">⚑ Possible over-charge detected</div>
+        <div class="demand-body" id="ext-flag-body"></div>
+      </div>
+      <button class="btn-p" style="margin-top:20px" onclick="rStep(4)">Generate receipt →</button>
+      <button class="btn-g" onclick="rStep(2)">← Back</button>
+    </div>
+
+    <!-- STEP 4: RECEIPT -->
+    <div id="rs4" class="step-panel anim" style="display:none">
+      <div class="step-ey">Step 4 of 4 — Your receipt</div>
+      <div class="step-h">Show this to the official</div>
+      <div class="step-sub">This receipt cites the actual legal rate for your goods at this crossing. You have the right to request a written reason if charged more.</div>
+      <div class="receipt-wrap" id="receipt-card"></div>
+      <button class="btn-p" onclick="shareReceipt()">📤 Share / Screenshot</button>
+      <button class="btn-outline" onclick="reportFromReceipt()">📡 Report this as extortion</button>
+      <button class="btn-g" onclick="goHome()">Done</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ RIGHTS GUIDE ════════════ -->
+<div id="scr-rights" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goHome()">← Back</button>
+    <div class="brand"><span class="brand-m">M</span><span class="brand-zigo">zigo</span></div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="scroll" style="padding-top:16px">
+    <div class="eyebrow" style="margin-bottom:6px">Your rights at the EAC border</div>
+    <div style="font-size:13px;color:var(--w60);line-height:1.6;margin-bottom:20px">Under the EAC Customs Management Act and the EAC Simplified Trade Regime. These are your legal protections — not suggestions.</div>
+    <div id="rights-list"></div>
+    <div class="info-box">Legal citations: EAC Customs Management Act 2004 (EACCMA), EAC Common External Tariff (CET) 2025, EAC Simplified Trade Regime (STR) Guidelines 2017, Kenya Revenue Authority Customs Policy Circular 2024.</div>
+  </div>
+</div>
+
+<!-- ════════════ REPORT EXTORTION ════════════ -->
+<div id="scr-report" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goHome()">← Back</button>
+    <div class="brand"><span class="brand-m">M</span><span class="brand-zigo">zigo</span></div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="scroll" style="padding-top:16px">
+    <div class="eyebrow" style="margin-bottom:6px">Report a fee violation</div>
+    <div style="font-size:13px;color:var(--w60);line-height:1.6;margin-bottom:20px">Anonymous. Goes directly into the Mzigo crossing intel database, shared with EAC civil society monitors and, where patterns emerge, with the Kenya National Taxpayers Association.</div>
+    <label class="f-label">Crossing point</label>
+    <select class="f-input" id="rep-crossing" style="margin-bottom:4px">
+      <option value="">Select crossing…</option>
+      <option>Busia (Kenya–Uganda)</option>
+      <option>Malaba (Kenya–Uganda)</option>
+      <option>Namanga (Kenya–Tanzania)</option>
+      <option>Taveta / Holili (Kenya–Tanzania)</option>
+      <option>Isebania / Sirari (Kenya–Tanzania)</option>
+      <option>Moyale (Kenya–Ethiopia)</option>
+      <option>Lungalunga / Horohoro (Kenya–Tanzania)</option>
+      <option>Other</option>
+    </select>
+    <label class="f-label">Commodity type</label>
+    <input class="f-input" id="rep-commodity" type="text" placeholder="e.g. Maize, clothing, charcoal…">
+    <label class="f-label">Legal fee (KSh) — if known</label>
+    <input class="f-input" id="rep-legal" type="number" placeholder="Leave blank if unknown">
+    <label class="f-label">Amount demanded (KSh) *</label>
+    <input class="f-input" id="rep-demanded" type="number" placeholder="What they asked for">
+    <label class="f-label">What happened</label>
+    <textarea class="f-input" id="rep-desc" rows="4" placeholder="Describe what was said or done. You don't need to name the official."></textarea>
+    <label class="f-label">Date and time (approximate)</label>
+    <input class="f-input" id="rep-dt" type="datetime-local">
+    <div class="info-box" style="margin-top:16px">Your phone number or identity is never collected. Reports are stored anonymously and aggregated by crossing point. Individual report content is only shared with civil society monitors — never with border agencies.</div>
+    <button class="btn-p" style="margin-top:16px" onclick="submitReport()">Submit anonymous report</button>
+    <div id="rep-confirm" style="display:none" class="card" style="margin-top:14px">
+      <div style="font-size:15px;font-weight:700;color:var(--green);margin-bottom:6px">✓ Report submitted</div>
+      <div id="rep-confirm-body" class="card-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ CROSSING INTEL FEED ════════════ -->
+<div id="scr-feed" class="screen">
+  <div class="topbar">
+    <button class="topbar-back" onclick="goHome()">← Back</button>
+    <div class="brand"><span class="brand-m">M</span><span class="brand-zigo">zigo</span></div>
+    <div style="width:60px"></div>
+  </div>
+  <div class="scroll" style="padding-top:16px">
+    <div class="eyebrow" style="margin-bottom:6px">Crossing intelligence</div>
+    <div style="font-size:13px;color:var(--w60);line-height:1.6;margin-bottom:16px">Recent fee reports from traders at EAC crossings. Red = overcharge. Orange = warning. Green = correct fee charged.</div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;margin-bottom:4px" id="cross-filter-btns"></div>
+    <div id="feed-list"></div>
+    <div class="info-box">All reports are anonymous. The crossing intel feed is updated in real time as Mzigo users submit dispute receipts and extortion reports.</div>
+  </div>
+</div>
+
+<!-- LANGUAGE OVERLAY -->
+<div id="lang-overlay" class="lang-overlay" style="display:none" onclick="hideLang(event)">
+  <div class="lang-sheet" onclick="event.stopPropagation()">
+    <div class="lang-title">Choose language / Chagua lugha</div>
+    <div class="lang-grid">
+      <button class="lang-btn active" onclick="setLang('en')">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('sw')">🇰🇪 Kiswahili</button>
+      <button class="lang-btn" onclick="setLang('fr')">🇫🇷 Français</button>
+      <button class="lang-btn" onclick="setLang('lu')">🇺🇬 Luganda</button>
+    </div>
+    <button class="btn-g" onclick="hideLang()" style="margin-top:12px">Close</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav" id="bnav">
+  <button class="bnav-btn on" id="bn-home" onclick="goHome()"><span class="bi">🏠</span>Home</button>
+  <button class="bnav-btn" id="bn-receipt" onclick="goReceipt()"><span class="bi">🧾</span>Receipt</button>
+  <button class="bnav-btn" id="bn-rights" onclick="goRights()"><span class="bi">⚖️</span>Rights</button>
+  <button class="bnav-btn" id="bn-feed" onclick="goFeed()"><span class="bi">🗺️</span>Intel</button>
+</div>
+
+</div><!-- /app -->
+
+<script>
+/* ══════════════════════════════════════
+   COMMODITY DATA (EAC CET 2025)
+══════════════════════════════════════ */
+const COMMODITIES = [
+  { id:'maize',  icon:'🌽', name:'Maize / Mahindi',      cat:'Agricultural', hs:'1005.90', duty:0, str:true,  note:'Zero duty within EAC for originating goods. Certificate of Origin required above $2,000 value.' },
+  { id:'beans',  icon:'🫘', name:'Beans / Maharagwe',    cat:'Agricultural', hs:'0713.39', duty:0, str:true,  note:'Zero duty within EAC for originating goods. No certificate required under STR threshold.' },
+  { id:'rice',   icon:'🍚', name:'Rice / Mchele',        cat:'Agricultural', hs:'1006.30', duty:75,str:true,  note:'EAC CET 75% for non-originating rice. Zero for EAC-origin with Certificate of Origin.' },
+  { id:'sugar',  icon:'🍬', name:'Sugar / Sukari',       cat:'Agricultural', hs:'1701.99', duty:100,str:true, note:'Sensitive item. 100% duty on imports from outside EAC. Within EAC: check origin rules.' },
+  { id:'oil',    icon:'🫙', name:'Cooking oil / Mafuta', cat:'Agricultural', hs:'1511.90', duty:35, str:true, note:'35% EAC CET. Palm oil from EAC member states may qualify for zero rate with CoO.' },
+  { id:'toma',   icon:'🍅', name:'Tomatoes / Nyanya',    cat:'Agricultural', hs:'0702.00', duty:25, str:true, note:'25% EAC CET. Fresh tomatoes from EAC origin: zero with valid Certificate of Origin.' },
+  { id:'onion',  icon:'🧅', name:'Onions / Vitunguu',    cat:'Agricultural', hs:'0703.10', duty:25, str:true, note:'25% EAC CET on non-EAC origin. EAC origin: zero duty, CoO required above $2,000.' },
+  { id:'fish',   icon:'🐟', name:'Fish / Samaki',        cat:'Agricultural', hs:'0302.89', duty:25, str:true, note:'25% EAC CET on dried/salted fish. Fresh fish from EAC waters may qualify for zero rate.' },
+  { id:'cloth',  icon:'👗', name:'Clothing / Nguo',      cat:'Manufactured', hs:'6211.42', duty:35, str:true, note:'35% EAC CET on clothing. New clothing from EAC factories with CoO: zero rate.' },
+  { id:'shoes',  icon:'👟', name:'Shoes / Viatu',        cat:'Manufactured', hs:'6403.99', duty:35, str:true, note:'35% EAC CET. EAC-manufactured footwear with CoO: zero rate.' },
+  { id:'phone',  icon:'📱', name:'Mobile phone / Simu',  cat:'Electronics',  hs:'8517.12', duty:10, str:false, note:'10% EAC CET. One personal phone: duty-free as personal effect. Commercial quantities taxed.' },
+  { id:'char',   icon:'♨️', name:'Charcoal / Mkaa',     cat:'Agricultural', hs:'2702.10', duty:25, str:true, note:'25% EAC CET. Charcoal regulation varies — some EAC countries restrict trade. Check at crossing.' },
+  { id:'craft',  icon:'🧺', name:'Crafts / Handwork',    cat:'Manufactured', hs:'4602.19', duty:10, str:true, note:'10% EAC CET. Handicrafts made by the trader themselves may qualify for reduced rates.' },
+  { id:'cassava',icon:'🥔', name:'Cassava / Muhogo',     cat:'Agricultural', hs:'0714.10', duty:0,  str:true, note:'Zero EAC CET on cassava. Fresh produce — no certificate required under STR threshold.' },
+  { id:'banana', icon:'🍌', name:'Banana / Ndizi',       cat:'Agricultural', hs:'0803.90', duty:25, str:true, note:'25% EAC CET. Bananas from EAC origin: zero with Certificate of Origin.' },
+  { id:'avoc',   icon:'🥑', name:'Avocado',              cat:'Agricultural', hs:'0804.40', duty:25, str:true, note:'25% EAC CET. Kenya is a major avocado exporter — confirm KeSS phytosanitary clearance.' },
+];
+
+/* ══════════════════════════════════════
+   CROSSING DATA (LEGAL FEES)
+══════════════════════════════════════ */
+const CROSSINGS = [
+  { id:'busia',    name:'Busia OSBP',      route:'Kenya ↔ Uganda',    vol:'1,200 trucks/day', fee_base:320, fee_note:'KRA customs processing: KSh 320 per STR declaration. No other official fees payable.' },
+  { id:'malaba',   name:'Malaba OSBP',     route:'Kenya ↔ Uganda',    vol:'900 trucks/day',  fee_base:320, fee_note:'KRA customs processing: KSh 320 per declaration. Luggage fee: nil for personal goods under USD 500.' },
+  { id:'namanga',  name:'Namanga OSBP',    route:'Kenya ↔ Tanzania',  vol:'600 trucks/day',  fee_base:280, fee_note:'Joint customs: KSh 280 equivalent per declaration. KEBS inspection: nil under USD 2,000.' },
+  { id:'taveta',   name:'Taveta / Holili', route:'Kenya ↔ Tanzania',  vol:'200 trucks/day',  fee_base:280, fee_note:'STR point: KSh 280 per declaration. No handling fee for goods under 50kg.' },
+  { id:'isebania', name:'Isebania / Sirari',route:'Kenya ↔ Tanzania', vol:'350 trucks/day',  fee_base:280, fee_note:'KSh 280 per STR declaration. No border levy. KEBS certificate: only above USD 2,000.' },
+  { id:'moyale',   name:'Moyale OSBP',     route:'Kenya ↔ Ethiopia',  vol:'150 trucks/day',  fee_base:400, fee_note:'KSh 400 per declaration. Note: Ethiopian birr may be required for Ethiopian-side fees.' },
+  { id:'lunga',    name:'Lungalunga / Horohoro',route:'Kenya ↔ Tanzania',vol:'180 trucks/day', fee_base:280, fee_note:'KSh 280 per declaration. Coastal crossing — additional KPA marine levy only for sea cargo.' },
+  { id:'other',    name:'Other crossing',  route:'Various',            vol:'',                fee_base:320, fee_note:'Standard EAC STR declaration fee: KSh 320. No other fees are officially sanctioned.' },
+];
+
+/* ══════════════════════════════════════
+   EXTORTION REPORTS (SEED)
+══════════════════════════════════════ */
+const SEED_REPORTS = [
+  { id:'MZ-A1B2', crossing:'Busia OSBP', commodity:'Maize', legalFee:320, demanded:1500, ts:'2026-06-17T08:30:00', desc:'Officer said "customs clearance fee" of KSh 1,500. Receipt refused. Showed Mzigo receipt and was eventually waved through for KSh 320.', flag:'extortion' },
+  { id:'MZ-C3D4', crossing:'Namanga OSBP', commodity:'Clothing', legalFee:280, demanded:800, ts:'2026-06-16T14:20:00', desc:'Demanded KSh 800 for "KEBS inspection" on 15 dresses. KEBS inspection only mandatory above $2,000. Resolved with Mzigo receipt.', flag:'extortion' },
+  { id:'MZ-E5F6', crossing:'Malaba OSBP', commodity:'Tomatoes', legalFee:320, demanded:320, ts:'2026-06-16T09:15:00', desc:'Correct fee charged. Officer used eCUSTOMS app. Fast and professional.', flag:'correct' },
+  { id:'MZ-G7H8', crossing:'Busia OSBP', commodity:'Beans', legalFee:320, demanded:600, ts:'2026-06-15T16:45:00', desc:'Additional "handling fee" of KSh 280 demanded. No basis in law. Trader showed Mzigo receipt. Fee waived after 10-minute standoff.', flag:'extortion' },
+  { id:'MZ-I9J0', crossing:'Isebania / Sirari', commodity:'Avocado', legalFee:280, demanded:500, ts:'2026-06-15T07:30:00', desc:'KSh 220 overcharge on 40kg of avocado. "County levy" cited — no such levy exists at this crossing.', flag:'extortion' },
+  { id:'MZ-K1L2', crossing:'Taveta / Holili', commodity:'Fish', legalFee:280, demanded:280, ts:'2026-06-14T11:00:00', desc:'Correct fee, correct receipt issued. No issues.', flag:'correct' },
+  { id:'MZ-M3N4', crossing:'Busia OSBP', commodity:'Cooking oil', legalFee:320, demanded:750, ts:'2026-06-14T08:20:00', desc:'Officer claimed 35% duty applied to cooking oil from Uganda. Trader is Ugandan, oil is EAC-origin — should be zero with CoO. Demanded KSh 750 equivalent.', flag:'extortion' },
+  { id:'MZ-O5P6', crossing:'Malaba OSBP', commodity:'Mobile phone', legalFee:0, demanded:500, ts:'2026-06-13T15:10:00', desc:'Demanded KSh 500 for personal phone (one unit). Personal phones are duty-free as personal effects. Trader showed Mzigo receipt and walked through.', flag:'extortion' },
+];
+
+let ALL_REPORTS = [...SEED_REPORTS];
+try { const s = JSON.parse(localStorage.getItem('mzigo_reports') || '[]'); ALL_REPORTS = [...s, ...SEED_REPORTS]; } catch(e) {}
+
+/* ══════════════════════════════════════
+   RIGHTS DATA
+══════════════════════════════════════ */
+const RIGHTS = [
+  { title:'You have the right to know the exact legal fee before you pay', body:'Under EACCMA 2004 Section 127, customs officers must inform you of the assessed duty and its basis before collecting payment. You can ask for the fee in writing.', cite:'EACCMA 2004, Section 127 — Duty Assessment and Notification' },
+  { title:'Goods under USD 2,000 qualify for the Simplified Trade Regime', body:'If your goods are worth less than USD 2,000 (approximately KSh 260,000), you qualify for the STR. This means simplified forms, lower fees, and no requirement for a clearing agent. You file yourself.', cite:'EAC Simplified Trade Regime (STR) Guidelines, 2017' },
+  { title:'EAC-origin goods trade at zero customs duty within the Community', body:'If your goods were made or grown in an EAC country and you have a valid Certificate of Origin, no import duty is payable. "Originating goods" includes crops grown, fish caught, or products substantially manufactured within EAC.', cite:'EAC Customs Management Act 2004, Schedule 2 — Rules of Origin' },
+  { title:'You can demand a written receipt for every payment', body:'Any amount collected at the border must be receipted. Under KRA policy, officials must use an Electronic Tax Register or official receipt book. If a receipt is refused, that payment is not an official charge.', cite:'Kenya Revenue Authority Policy Circular 2024 — Border Receipting' },
+  { title:'"County levies" and "handling fees" at the border are not legal', body:'No county government has the legal authority to levy fees at a national border crossing. "Handling fees" are not an authorised charge under EAC or Kenyan customs law. If charged this, demand the legal authority in writing.', cite:'County Governments Act 2012, Section 114 — Scope of County Revenue; EACCMA 2004' },
+  { title:'You have the right to lodge a complaint at any time', body:'If you believe a fee was unlawfully charged, you can lodge a complaint with: KRA via kra.go.ke, the Kenya Anti-Corruption Commission (KACC), or the EAC Secretariat trade facilitation desk. Mzigo\'s extortion report goes to civil society monitors.', cite:'EAC Treaty, Article 75 — Trade Facilitation Grievance Mechanism' },
+  { title:'KEBS inspection is only mandatory above USD 2,000', body:'The Kenya Bureau of Standards pre-export verification of conformity (PVoC) is only required for commercial shipments above USD 2,000 in value. Below this threshold, personal and small-scale trader goods are exempt.', cite:'Kenya Bureau of Standards Act, Cap 496 — PVoC Requirements' },
+  { title:'Personal items are duty-free up to USD 500', body:'Every person entering Kenya is entitled to bring personal and household goods worth up to USD 500 duty-free. This applies to phones, clothing, and household items for personal use — not for commercial resale.', cite:'EACCMA 2004, Fifth Schedule — Passenger Concessions' },
+];
+
+/* ══════════════════════════════════════
+   LANGUAGES
+══════════════════════════════════════ */
+let currentLang = 'en';
+const STRINGS = {
+  en: { eyebrow:'EAC cross-border rights', headline:'If they\'re charging you more than the law allows — <em>Mzigo proves it</em>', sub:'Select your commodity, crossing point, and quantity. Mzigo generates an instant fee dispute receipt showing the legal rate — something you can show a border official right now, in the moment.' },
+  sw: { eyebrow:'Haki za mpakani wa EAC', headline:'Wakikusanya zaidi ya inavyoruhusiwa na sheria — <em>Mzigo inathibitisha</em>', sub:'Chagua bidhaa yako, mpakani, na kiasi. Mzigo inatoa risiti ya haraka ya mgogoro wa ada — unaweza kuionyesha afisa wa mpakani sasa hivi, wakati huu huu.' },
+  fr: { eyebrow:'Droits à la frontière CEA', headline:'S\'ils vous facturent plus que la loi permet — <em>Mzigo le prouve</em>', sub:'Sélectionnez votre marchandise, le poste frontalier et la quantité. Mzigo génère un reçu de contestation de frais instantané.' },
+  lu: { eyebrow:'Eddembe ly\'omukutu gwa EAC', headline:'Bw\'oba bakulemba ssente ezisinga ezirayirwa — <em>Mzigo kitegeeza</em>', sub:'Londa ebintu byo, omukutu, n\'obungi. Mzigo eteekawo resiti ey\'okubuulira omusulo — osobola okuyilagirirwa omulabirizi w\'omukutu' },
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  const s = STRINGS[lang] || STRINGS.en;
+  document.getElementById('l-eyebrow').textContent = s.eyebrow;
+  document.getElementById('l-headline').innerHTML = s.headline;
+  document.getElementById('l-sub').textContent = s.sub;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[onclick="setLang('${lang}')"]`).classList.add('active');
+  hideLang();
+}
+function showLang() { document.getElementById('lang-overlay').style.display = 'flex'; }
+function hideLang(e) { if (!e || e.target === document.getElementById('lang-overlay')) document.getElementById('lang-overlay').style.display = 'none'; }
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('on'));
+  const map = { 'scr-home':'bn-home','scr-receipt':'bn-receipt','scr-rights':'bn-rights','scr-feed':'bn-feed','scr-report':'bn-feed' };
+  if (map[id]) document.getElementById(map[id]).classList.add('on');
+  window.scrollTo(0,0);
+}
+function goHome()    { showScreen('scr-home'); }
+function goReceipt() { resetReceipt(); showScreen('scr-receipt'); }
+function goRights()  { showScreen('scr-rights'); }
+function goReport()  { showScreen('scr-report'); }
+function goFeed()    { renderFeed(); showScreen('scr-feed'); }
+
+/* ══════════════════════════════════════
+   RECEIPT FLOW
+══════════════════════════════════════ */
+let rState = { comm:null, crossing:null, qty:0, unit:'kg', traderName:'', demanded:0 };
+
+function resetReceipt() {
+  rState = { comm:null, crossing:null, qty:0, unit:'kg', traderName:'', demanded:0 };
+  buildCommGrid();
+  buildCrossGrid();
+  document.getElementById('qty-input').value = '';
+  document.getElementById('trader-name').value = '';
+  document.getElementById('demanded-amt').value = '';
+  document.getElementById('live-calc').style.display = 'none';
+  document.getElementById('extortion-flag').style.display = 'none';
+  document.getElementById('comm-search').value = '';
+  setUnit('kg');
+  rStep(1, true);
+}
+
+function rStep(n, init) {
+  ['sd1','sd2','sd3','sd4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'step-d' + (i+1<n?' done':i+1===n?' cur':'');
+  });
+  ['rs1','rs2','rs3','rs4'].forEach((id,i) => {
+    const p = document.getElementById(id);
+    p.style.display = i+1===n?'block':'none';
+    if (i+1===n && !init) p.classList.add('anim');
+  });
+  window.scrollTo(0,0);
+}
+
+/* COMMODITY GRID */
+function buildCommGrid(filter) {
+  const grid = document.getElementById('comm-grid');
+  const data = filter ? COMMODITIES.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()) || c.cat.toLowerCase().includes(filter.toLowerCase())) : COMMODITIES;
+  grid.innerHTML = data.map(c =>
+    `<div class="comm-tile${rState.comm?.id===c.id?' sel':''}" onclick="selectComm('${c.id}')">
+      <div class="comm-icon">${c.icon}</div>
+      <div class="comm-name">${c.name}</div>
+      <div class="comm-cat">${c.cat}</div>
+      <div class="comm-hs">HS ${c.hs} · ${c.duty}% duty</div>
+    </div>`
+  ).join('');
+}
+function filterComm() { buildCommGrid(document.getElementById('comm-search').value); }
+function selectComm(id) {
+  rState.comm = COMMODITIES.find(c => c.id === id);
+  buildCommGrid(document.getElementById('comm-search').value);
+  document.getElementById('r-s1-next').disabled = false;
+}
+
+/* CROSSING GRID */
+function buildCrossGrid() {
+  document.getElementById('cross-grid').innerHTML = CROSSINGS.map(c =>
+    `<div class="cross-tile${rState.crossing?.id===c.id?' sel':''}" onclick="selectCross('${c.id}')">
+      <div class="cross-name">${c.name}</div>
+      <div class="cross-route">${c.route}</div>
+      <div class="cross-volume">${c.vol}</div>
+    </div>`
+  ).join('');
+  document.getElementById('r-s2-next').disabled = !rState.crossing;
+}
+function selectCross(id) {
+  rState.crossing = CROSSINGS.find(c => c.id === id);
+  buildCrossGrid();
+  document.getElementById('r-s2-next').disabled = !rState.crossing || !document.getElementById('cross-dir').value;
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const dir = document.getElementById('cross-dir');
+  if (dir) dir.addEventListener('change', () => {
+    document.getElementById('r-s2-next').disabled = !rState.crossing || !dir.value;
+  });
+});
+
+function setUnit(u) {
+  rState.unit = u;
+  ['kg','bags','pcs'].forEach(x => document.getElementById('unit-'+x).className = 'unit-btn' + (x===u?' on':''));
+  calcFee();
+}
+
+function calcFee() {
+  const qty = parseFloat(document.getElementById('qty-input').value) || 0;
+  const demanded = parseFloat(document.getElementById('demanded-amt').value) || 0;
+  rState.qty = qty;
+  rState.demanded = demanded;
+  if (!rState.comm || !rState.crossing || qty <= 0) {
+    document.getElementById('live-calc').style.display = 'none';
+    return;
+  }
+  const crossing = rState.crossing;
+  const legalFee = crossing.fee_base;
+  const lc = document.getElementById('live-calc');
+  lc.style.display = 'block';
+  document.getElementById('calc-legal').textContent = `Legal fee: KSh ${legalFee.toLocaleString()}`;
+  document.getElementById('calc-str').textContent = `${rState.comm.name} · ${qty} ${rState.unit} · ${crossing.name}`;
+
+  const extFlag = document.getElementById('extortion-flag');
+  if (demanded > 0 && demanded > legalFee * 1.1) {
+    const excess = demanded - legalFee;
+    document.getElementById('ext-flag-body').innerHTML = `You are being asked for <strong>KSh ${demanded.toLocaleString()}</strong>. The legal fee is <strong>KSh ${legalFee.toLocaleString()}</strong>. The excess of <strong>KSh ${excess.toLocaleString()}</strong> has no basis in law. Generate your receipt to dispute this.`;
+    extFlag.style.display = 'block';
+  } else {
+    extFlag.style.display = 'none';
+  }
+}
+
+function buildReceipt() {
+  if (!rState.comm || !rState.crossing) return;
+  const c = rState.comm;
+  const cr = rState.crossing;
+  const legalFee = cr.fee_base;
+  const demanded = rState.demanded;
+  const isDispute = demanded > legalFee * 1.1;
+  const excess = isDispute ? demanded - legalFee : 0;
+  const refId = 'MZ-' + Date.now().toString(36).toUpperCase().slice(-6);
+  const now = new Date().toLocaleString('en-KE', {timeZone:'Africa/Nairobi'});
+  const traderName = document.getElementById('trader-name').value.trim() || 'Trader';
+  const dir = document.getElementById('cross-dir').value || '';
+
+  const dispBlock = isDispute ? `
+    <div class="demand-box" style="margin:0 0 14px">
+      <div class="demand-title">⚑ Fee dispute — overcharge of KSh ${excess.toLocaleString()} claimed</div>
+      <div class="demand-body">Under EAC Customs Management Act 2004 and the EAC Simplified Trade Regime (STR) Guidelines 2017, the only authorised fee at this crossing for goods valued under USD 2,000 is the standard declaration fee of <strong>KSh ${legalFee.toLocaleString()}</strong>. Any fee above this amount requires a written legal authority, which must be provided on request under EACCMA 2004 Section 127.</div>
+    </div>` : '';
+
+  document.getElementById('receipt-card').innerHTML = `
+    <div class="receipt-header">
+      <div class="receipt-logo">M</div>
+      <div>
+        <div class="receipt-title">Mzigo Fee Dispute Receipt</div>
+        <div class="receipt-sub">EAC Cross-Border Rights · ${now}</div>
+      </div>
+    </div>
+    <div class="receipt-body">
+      ${dispBlock}
+      <div class="r-row"><span class="r-key">Trader</span><span class="r-val">${esc(traderName)}</span></div>
+      <div class="r-row"><span class="r-key">Commodity</span><span class="r-val">${c.icon} ${c.name}<br><span style="font-size:11px;color:var(--w40)">HS Code ${c.hs}</span></span></div>
+      <div class="r-row"><span class="r-key">Quantity</span><span class="r-val">${rState.qty} ${rState.unit}</span></div>
+      <div class="r-row"><span class="r-key">Crossing</span><span class="r-val">${cr.name}<br><span style="font-size:11px;color:var(--w40)">${dir}</span></span></div>
+      <div class="r-row"><span class="r-key">EAC duty rate</span><span class="r-val">${c.duty}%<br><span style="font-size:11px;color:var(--w40)">${c.str ? 'STR eligible' : 'STR not applicable'}</span></span></div>
+      <div class="r-row"><span class="r-key">✓ Legal border fee</span><span class="r-val r-highlight">KSh ${legalFee.toLocaleString()}</span></div>
+      ${isDispute ? `<div class="r-row"><span class="r-key">Amount demanded</span><span class="r-val" style="color:var(--red)">KSh ${demanded.toLocaleString()}</span></div>` : ''}
+      ${isDispute ? `<div class="r-row"><span class="r-key">⚑ Excess charged</span><span class="r-val" style="color:var(--red);font-weight:800">KSh ${excess.toLocaleString()}</span></div>` : ''}
+      <div class="r-row" style="border-top:1px solid var(--gold-g);margin-top:4px;padding-top:10px"><span class="r-key">Fee authority</span><span class="r-val" style="font-size:11px;text-align:right">${cr.fee_note}</span></div>
+      <div class="r-row"><span class="r-key">Legal citation</span><span class="r-val" style="font-size:11px;text-align:right">EACCMA 2004 · EAC STR 2017 · KRA Policy Circular 2024</span></div>
+    </div>
+    <div class="receipt-footer">
+      <div class="receipt-legal">${c.note}</div>
+      <div class="receipt-ref">${refId}</div>
+    </div>`;
+
+  // Save to reports
+  if (isDispute) {
+    const report = { id: refId, crossing: cr.name, commodity: c.name, legalFee, demanded, ts: new Date().toISOString(), desc: `Receipt generated. Overcharge of KSh ${excess.toLocaleString()} disputed.`, flag: 'extortion' };
+    try { const ex = JSON.parse(localStorage.getItem('mzigo_reports') || '[]'); ex.unshift(report); localStorage.setItem('mzigo_reports', JSON.stringify(ex)); ALL_REPORTS.unshift(report); } catch(e) {}
+  }
+}
+
+// Override rStep to build receipt on step 4
+const _origRStep = rStep;
+window.rStep = function(n, init) {
+  if (n === 4) buildReceipt();
+  _origRStep(n, init);
+};
+
+function shareReceipt() {
+  const text = document.getElementById('receipt-card').innerText;
+  if (navigator.share) { navigator.share({ title:'Mzigo Fee Dispute Receipt', text }); }
+  else { navigator.clipboard.writeText(text).then(() => alert('Receipt copied to clipboard. Paste it anywhere.')); }
+}
+
+function reportFromReceipt() {
+  if (rState.crossing) document.getElementById('rep-crossing').value = rState.crossing.name;
+  if (rState.comm) document.getElementById('rep-commodity').value = rState.comm.name;
+  if (rState.demanded) document.getElementById('rep-demanded').value = rState.demanded;
+  if (rState.crossing) document.getElementById('rep-legal').value = rState.crossing.fee_base;
+  goReport();
+}
+
+/* ══════════════════════════════════════
+   RIGHTS GUIDE
+══════════════════════════════════════ */
+function buildRights() {
+  document.getElementById('rights-list').innerHTML = RIGHTS.map(r =>
+    `<div class="right-item">
+      <div class="right-title">${r.title}</div>
+      <div class="right-body">${r.body}</div>
+      <div class="right-cite">📖 ${r.cite}</div>
+    </div>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════
+   EXTORTION REPORT SUBMIT
+══════════════════════════════════════ */
+function submitReport() {
+  const crossing = document.getElementById('rep-crossing').value;
+  const commodity = document.getElementById('rep-commodity').value.trim();
+  const demanded = parseFloat(document.getElementById('rep-demanded').value) || 0;
+  const legal = parseFloat(document.getElementById('rep-legal').value) || 0;
+  const desc = document.getElementById('rep-desc').value.trim();
+  if (!crossing || !demanded || !desc) { alert('Please fill in the crossing, amount demanded, and description.'); return; }
+  const report = {
+    id: 'MZ-' + Date.now().toString(36).toUpperCase().slice(-6),
+    crossing, commodity: commodity || 'Not specified', legalFee: legal || null, demanded,
+    ts: new Date().toISOString(), desc, flag: demanded > (legal||0) * 1.1 ? 'extortion' : 'warning'
+  };
+  try { const ex = JSON.parse(localStorage.getItem('mzigo_reports') || '[]'); ex.unshift(report); localStorage.setItem('mzigo_reports', JSON.stringify(ex)); ALL_REPORTS.unshift(report); } catch(e) {}
+  document.getElementById('rep-confirm-body').innerHTML = `Report ID: <strong>${report.id}</strong>. Added to crossing intel database. Civil society monitors will be notified if a pattern emerges at ${crossing}.`;
+  document.getElementById('rep-confirm').style.display = 'block';
+  ['rep-crossing','rep-commodity','rep-legal','rep-demanded','rep-desc','rep-dt'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+/* ══════════════════════════════════════
+   CROSSING INTEL FEED
+══════════════════════════════════════ */
+let activeCrossFilter = 'all';
+function renderFeed() {
+  const crossings = ['all', ...new Set(ALL_REPORTS.map(r => r.crossing))];
+  document.getElementById('cross-filter-btns').innerHTML = crossings.slice(0,6).map(c =>
+    `<button onclick="setCrossFilter('${c}')" style="background:${c===activeCrossFilter?'var(--gold-l)':'var(--ink3)'};border:1px solid ${c===activeCrossFilter?'var(--gold)':'var(--bd)'};color:${c===activeCrossFilter?'var(--gold)':'var(--w60)'};border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:var(--font-b)">${c==='all'?'All crossings':c.split(' ')[0]}</button>`
+  ).join('');
+
+  let data = activeCrossFilter === 'all' ? ALL_REPORTS : ALL_REPORTS.filter(r => r.crossing === activeCrossFilter);
+  document.getElementById('feed-list').innerHTML = data.slice(0,20).map(r => {
+    const col = r.flag==='extortion'?'var(--red)':r.flag==='warning'?'var(--gold)':'var(--green)';
+    const badge = r.flag==='extortion'?'badge-ext':r.flag==='warning'?'badge-warn':'badge-ok';
+    const badgeText = r.flag==='extortion'?'OVERCHARGE':r.flag==='warning'?'WARNING':'✓ CORRECT';
+    const ago = timeAgo(new Date(r.ts));
+    return `<div class="cross-report">
+      <div class="cr-header">
+        <div><div class="cr-crossing">${r.crossing}</div><div class="cr-ts">${r.commodity} · ${ago}</div></div>
+        <span class="badge-ext ${badge}">${badgeText}</span>
+      </div>
+      ${r.legalFee ? `<div class="cr-amount"><span class="cr-legal">Legal: KSh ${r.legalFee.toLocaleString()}</span><span style="color:var(--w40)">·</span><span class="cr-charged" style="color:${col}">Charged: KSh ${r.demanded.toLocaleString()}</span></div>` : ''}
+      <div class="cr-desc">${esc(r.desc)}</div>
+    </div>`;
+  }).join('') || `<div style="font-size:13px;color:var(--w40);padding:20px 0;text-align:center">No reports yet for this crossing.</div>`;
+}
+
+function setCrossFilter(c) {
+  activeCrossFilter = c;
+  renderFeed();
+}
+
+/* ══════════════════════════════════════
+   HOME FEED
+══════════════════════════════════════ */
+function renderHomeFeed() {
+  const feed = document.getElementById('home-feed');
+  const recent = ALL_REPORTS.slice(0, 5);
+  feed.innerHTML = recent.map(r => {
+    const col = r.flag==='extortion'?'var(--red)':r.flag==='warning'?'var(--gold)':'var(--green)';
+    const ago = timeAgo(new Date(r.ts));
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;margin-top:4px"></div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--w80);margin-bottom:2px">${r.crossing}</div>
+        <div style="font-size:11px;color:var(--w40)">${r.commodity} · ${ago}</div>
+      </div>
+      <span style="font-size:10px;font-weight:700;color:${col}">${r.flag==='extortion'?'KSh '+(r.demanded-r.legalFee).toLocaleString()+' over':r.flag==='warning'?'WARNING':'✓ OK'}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   UTILS
+══════════════════════════════════════ */
+function timeAgo(d) {
+  const s = Math.floor((Date.now()-d)/1000);
+  if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function esc(s) { const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+buildCommGrid();
+buildCrossGrid();
+buildRights();
+renderHomeFeed();
+goHome();
+</script>
+</body>
+</html>
